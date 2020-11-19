@@ -64,6 +64,27 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min)
+  }
+
+app.post('/api/persons', (request, response) => {
+    let minn = Number(persons.length)
+
+    const person = {
+        id: getRandomInt(minn, 20),
+        name: request.body.name,
+        number: request.body.number
+    }
+
+    console.log(person.id)
+    persons = persons.concat(person)
+    response.json(person)
+
+})
+
 
 PORT = 3001
 app.listen(PORT, () => {
