@@ -72,16 +72,25 @@ function getRandomInt(min, max) {
 
 app.post('/api/persons', (request, response) => {
     let minn = Number(persons.length)
+    let found = persons.find(p => p.name === request.body.name)
 
-    const person = {
-        id: getRandomInt(minn, 20),
-        name: request.body.name,
-        number: request.body.number
+    if(!request.body.name || !request.body.number ){
+        response.status(400)
+        .json({ error: "name or number has not been entered"})
+    }else if(found){
+        response.status(400)
+        .json({ error: "person with name already exists"})
+    }else {
+        const person = {
+            id: getRandomInt(minn, 20),
+            name: request.body.name,
+            number: request.body.number
+        }
+    
+        console.log(person.id)
+        persons = persons.concat(person)
+        response.json(person)
     }
-
-    console.log(person.id)
-    persons = persons.concat(person)
-    response.json(person)
 
 })
 
