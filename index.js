@@ -58,14 +58,9 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(p => p.id === id)
-
-    if(!person){
-        response.status(404).end()
-    }else{
+    Person.findById(request.params.id).then( person => {
         response.json(person)
-    }
+    })
 
 })
 
@@ -82,6 +77,24 @@ function getRandomInt(min, max) {
   }
 
 app.post('/api/persons', (request, response) => {
+    const body = request.body
+
+    if(body.name === undefined || body.number === undefined){
+        return response.status(400).json({
+            error:'name or number is missing'
+        })}
+
+    const person = new Person({
+        name: body.name,
+        number:body.number
+    })
+
+    person.save().then( p => {
+        response.json(p)
+    })
+
+    
+    /*
     let minn = Number(persons.length)
     let found = persons.find(p => p.name === request.body.name)
 
@@ -102,6 +115,7 @@ app.post('/api/persons', (request, response) => {
         persons = persons.concat(person)
         response.json(person)
     }
+    */
 
 })
 
