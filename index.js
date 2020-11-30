@@ -51,7 +51,6 @@ app.get('/info', (request, response) => {
     console.log(tim)
     response.send(
         `<p>Phonebook has info for ${num} people</p>
-        
         <p>${tim}</p>
         `
     )
