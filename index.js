@@ -85,22 +85,32 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min)
   }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
+    /*
     if(body.name === undefined || body.number === undefined){
         return response.status(400).json({
             error:'name or number is missing'
         })}
 
+    Person.find({ name:body.name })
+    .then( response => {
+        response.status(400).json({
+            error:'name already exists'
+        })
+    })    
+    */
     const person = new Person({
         name: body.name,
         number:body.number
     })
 
     person.save().then( p => {
-        response.json(p)
-    })
+        return p.toJSON()
+    }).then( pFormatted => {
+        response.json(pFormatted)
+    }).catch( error => next(error))
 
     
     /*
@@ -157,7 +167,9 @@ const errorHandler = (error, request, response, next) => {
   
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
-    } 
+    }else if ( error.name === 'ValidationError'){
+        return response.status(400).send({ error: 'enter a unique name & 10 digit Number'})
+    }
   
     next(error)
   }
